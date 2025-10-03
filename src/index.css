@@ -1,0 +1,240 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* 诗画传情 紧凑样式 */
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html, body {
+    @apply bg-background text-foreground;
+    font-family: system-ui, -apple-system, sans-serif;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+  }
+
+  #root {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+  }
+}
+
+@layer utilities {
+  .h-screen {
+    height: 100vh;
+  }
+  .w-screen {
+    width: 100vw;
+  }
+  .min-h-screen {
+    min-height: 100vh;
+  }
+  .max-h-screen {
+    max-height: 100vh;
+  }
+  
+  /* 导航栏样式优化 - 增强毛玻璃效果 */
+  .nav-container {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow:
+      0 8px 32px 0 rgba(0, 0, 0, 0.08),
+      0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+  }
+  
+  .nav-button-active-home {
+    background: hsl(330 45% 65%);
+    color: hsl(45 25% 95%);
+  }
+  
+  .nav-button-active-poem {
+    background: hsl(12 65% 68%);
+    color: hsl(45 25% 95%);
+  }
+  
+  .nav-button-active-paint {
+    background: hsl(140 25% 45%);
+    color: hsl(45 25% 95%);
+  }
+  
+  .nav-button-inactive {
+    color: hsl(20 8% 25%);
+  }
+  
+  .nav-button-inactive:hover {
+    background: rgba(180, 180, 180, 0.2);
+  }
+
+  /* 古诗文样式 - 诗意美化 */
+  .poetry-text {
+    font-family: 'STKaiti', 'KaiTi', 'Microsoft YaHei', serif;
+    line-height: 2;
+    letter-spacing: 0.3em;
+    text-indent: 2em;
+    color: hsl(20 8% 25%);
+    font-size: 1.1rem;
+  }
+
+  .poetry-input {
+    font-family: 'STKaiti', 'KaiTi', 'Microsoft YaHei', serif;
+    line-height: 2.2;
+    letter-spacing: 0.15em;
+    color: hsl(20 8% 25%);
+    font-size: 1rem;
+  }
+
+  .poetry-output {
+    font-family: 'STKaiti', 'KaiTi', 'Microsoft YaHei', serif;
+    line-height: 2.5;
+    letter-spacing: 0.2em;
+    color: hsl(20 8% 20%);
+    font-size: 1.15rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+  }
+
+  /* 诗词装饰边框 */
+  .poetry-border {
+    border: 2px solid hsl(12 65% 68% / 0.3);
+    border-radius: 12px;
+    background: linear-gradient(135deg,
+      rgba(255, 253, 250, 0.95) 0%,
+      rgba(255, 250, 245, 0.98) 100%);
+    box-shadow: 0 4px 12px rgba(210, 150, 100, 0.1),
+                inset 0 1px 0 rgba(255, 255, 255, 0.5);
+  }
+
+  /* 诗词标题样式 */
+  .poetry-title {
+    font-family: 'STFangsong', 'FangSong', 'STKaiti', 'KaiTi', serif;
+    font-size: 1.3rem;
+    letter-spacing: 0.3em;
+    text-align: center;
+    color: hsl(12 65% 68%);
+    margin-bottom: 1rem;
+    position: relative;
+  }
+
+  /* 印章样式 */
+  .seal-stamp {
+    width: 60px;
+    height: 60px;
+    background: radial-gradient(circle,
+      hsl(0 85% 55%) 0%,
+      hsl(0 75% 45%) 100%);
+    border: 2px solid hsl(0 85% 45%);
+    border-radius: 4px;
+    box-shadow: 0 2px 8px rgba(220, 20, 60, 0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'STFangsong', 'FangSong', 'STKaiti', 'KaiTi', serif;
+    color: white;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 0.1em;
+    transform: rotate(-3deg);
+  }
+
+  /* 通用毛玻璃卡片效果 */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.75);
+    backdrop-filter: blur(20px) saturate(180%);
+    -webkit-backdrop-filter: blur(20px) saturate(180%);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    box-shadow:
+      0 8px 32px 0 rgba(0, 0, 0, 0.08),
+      0 0 0 1px rgba(255, 255, 255, 0.4) inset;
+  }
+
+  .glass-card:hover {
+    background: rgba(255, 255, 255, 0.85);
+    box-shadow:
+      0 12px 40px 0 rgba(0, 0, 0, 0.12),
+      0 0 0 1px rgba(255, 255, 255, 0.5) inset;
+  }
+
+  /* 高级按钮特效 */
+  .btn-primary {
+    @apply relative overflow-hidden;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .btn-primary::before {
+    content: '';
+    @apply absolute inset-0 bg-white/20;
+    transform: translateX(-100%);
+    transition: transform 0.6s ease;
+  }
+
+  .btn-primary:hover::before {
+    transform: translateX(0);
+  }
+
+  .btn-primary:active {
+    transform: scale(0.97);
+    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.15);
+  }
+
+  /* 选项切换特效 */
+  .option-chip {
+    @apply relative transition-all duration-300;
+    transform-origin: center;
+  }
+
+  .option-chip:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  }
+
+  .option-chip:active {
+    transform: translateY(0) scale(0.95);
+    transition-duration: 0.1s;
+  }
+
+  .option-chip.active {
+    animation: chip-select 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  @keyframes chip-select {
+    0% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.1);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  /* 涟漪效果 */
+  .ripple {
+    @apply relative overflow-hidden;
+  }
+
+  .ripple::after {
+    content: '';
+    @apply absolute bg-white/30 rounded-full;
+    width: 0;
+    height: 0;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    transition: width 0.6s ease, height 0.6s ease;
+  }
+
+  .ripple:active::after {
+    width: 300px;
+    height: 300px;
+  }
+}
