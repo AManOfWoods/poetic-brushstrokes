@@ -75,9 +75,14 @@ app.post('/api/image-to-text', async (req, res) => {
   }
 });
 
-// 所有其他请求返回 index.html（用于 SPA 路由）
-app.get('/*', (req, res) => {
-  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+// 所有其他 GET 请求返回 index.html（用于 SPA 路由）
+// 必须放在所有其他路由之后
+app.use((req, res, next) => {
+  if (req.method === 'GET' && !req.path.startsWith('/api')) {
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+  } else {
+    next();
+  }
 });
 
 app.listen(port, '0.0.0.0', () => {
