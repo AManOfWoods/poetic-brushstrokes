@@ -76,7 +76,7 @@ app.post('/api/image-to-text', async (req, res) => {
 });
 
 // 所有其他请求返回 index.html（用于 SPA 路由）
-app.get('*', (req, res) => {
+app.get('/*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
