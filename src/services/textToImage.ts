@@ -26,10 +26,9 @@ export class TextToImageService {
   private model: string;
 
   constructor() {
-    this.baseUrl = '/api/text-to-image';
-    // API Key and model are now handled by the backend proxy
-    this.apiKey = '';
-    this.model = '';
+    this.apiKey = import.meta.env.VITE_DOUBAO_API_KEY || '';
+    this.baseUrl = import.meta.env.VITE_DOUBAO_BASE_URL || 'https://ark.cn-beijing.volces.com/api/v3';
+    this.model = 'doubao-seedream-4.0-250828';
   }
 
   /**
@@ -56,8 +55,9 @@ export class TextToImageService {
       const stylePrefix = this.getStylePrompt(style);
       const fullPrompt = `${stylePrefix}${text}，高质量，精美细腻，艺术感强，4K分辨率`;
 
-      // 构建请求数据 - model 会由后端服务器自动添加
-      const requestData: Partial<TextToImageRequest> = {
+      // 构建请求数据
+      const requestData: TextToImageRequest = {
+        model: this.model,
         prompt: fullPrompt,
         size: '1024x1024',
         quality: 'hd',
@@ -71,11 +71,12 @@ export class TextToImageService {
         fullPrompt: fullPrompt,
         size: requestData.size
       });
-      
-      const response = await fetch(this.baseUrl, {
+
+      const response = await fetch(`${this.baseUrl}/images/generations`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`
         },
         body: JSON.stringify(requestData)
       });

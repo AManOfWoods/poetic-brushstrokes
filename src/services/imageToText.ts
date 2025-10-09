@@ -46,9 +46,9 @@ export class ImageToTextService {
   private model: string;
 
   constructor() {
-    this.apiKey = ''; // Now handled by backend proxy
-    this.baseUrl = '/api/image-to-text';
-    this.model = ''; // Now handled by backend proxy
+    this.apiKey = import.meta.env.VITE_DOUBAO_API_KEY || '';
+    this.baseUrl = import.meta.env.VITE_DOUBAO_BASE_URL || 'https://ark.cn-beijing.volces.com/api/v3';
+    this.model = 'doubao-seed-1.6-vision';
   }
 
   /**
@@ -106,11 +106,12 @@ export class ImageToTextService {
         imageSize: `${file.size} bytes`,
         fileName: file.name
       });
-      
-      const response = await fetch(this.baseUrl, {
+
+      const response = await fetch(`${this.baseUrl}/chat/completions`, {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${this.apiKey}`
         },
         body: JSON.stringify(requestData)
       });
