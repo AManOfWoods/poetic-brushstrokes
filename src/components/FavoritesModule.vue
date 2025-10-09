@@ -49,10 +49,19 @@
                 <p class="text-sm text-ink-wash mt-2 line-clamp-2">{{ item.content }}</p>
               </div>
 
-              <!-- 画生诗：显示诗词 -->
+              <!-- 画生诗：显示图片和诗词 -->
               <div v-else class="mb-3">
+                <!-- 原始图片 -->
+                <div v-if="item.content" class="relative bg-gradient-mist rounded-lg overflow-hidden mb-3" style="aspect-ratio: 1/1;">
+                  <img
+                    :src="item.content"
+                    alt="Original artwork"
+                    class="w-full h-full object-cover"
+                  />
+                </div>
+                <!-- 生成的诗词 -->
                 <div class="bg-gradient-mist/30 rounded-lg p-3 max-h-32 overflow-y-auto">
-                  <p class="text-sm text-ink-wash whitespace-pre-line">{{ item.result }}</p>
+                  <p class="text-sm text-ink-wash whitespace-pre-line">{{ cleanMarkdown(item.result) }}</p>
                 </div>
               </div>
 
@@ -89,6 +98,23 @@ import type { FavoriteItem } from '@/types/favorite'
 const backgroundImage = new URL('@/assets/bg.jpg', import.meta.url).href
 
 const favorites = ref<FavoriteItem[]>([])
+
+// 清理 Markdown 格式标记
+const cleanMarkdown = (text: string): string => {
+  if (!text) return ''
+
+  return text
+    // 移除标题标记 ### 和 ##
+    .replace(/^###\s*/gm, '')
+    .replace(/^##\s*/gm, '')
+    // 移除粗体标记 **
+    .replace(/\*\*(.*?)\*\*/g, '$1')
+    // 移除斜体标记 *
+    .replace(/\*(.*?)\*/g, '$1')
+    // 移除列表标记
+    .replace(/^[-*]\s+/gm, '')
+    .trim()
+}
 
 // 加载收藏列表
 const loadFavorites = () => {
