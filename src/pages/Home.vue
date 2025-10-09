@@ -1,5 +1,8 @@
 <template>
-  <div class="w-screen h-screen overflow-hidden bg-gradient-paper relative" :style="backgroundStyle">
+  <div class="w-screen h-screen overflow-hidden relative custom-bg-container" :class="{ 'bg-gradient-paper': !customBackground.value }" :style="backgroundStyle">
+    <!-- 半透明白色遮罩层，弱化背景 -->
+    <div class="absolute inset-0 pointer-events-none" :style="overlayStyle"></div>
+
     <div class="w-full h-full flex flex-col relative">
       <!-- 导航栏浮动在内容上方 -->
       <div class="absolute top-4 left-1/2 transform -translate-x-1/2 z-50">
@@ -25,7 +28,7 @@
                   : 'nav-button-inactive'
               ]"
             >
-              诗生画
+              寻诗入画
             </button>
             <button
               @click="setActiveTab('image-to-text')"
@@ -36,7 +39,7 @@
                   : 'nav-button-inactive'
               ]"
             >
-              画生诗
+              览画成诗
             </button>
             <button
               @click="setActiveTab('favorites')"
@@ -103,20 +106,37 @@ const selectedPoetry = ref<string>('')
 const showSettings = ref(false)
 const widgetSize = ref<string>('large')
 const customBackground = ref<string>('')
+const backgroundOpacity = ref<number>(70)
 
 // 提供全局生成状态
 provide('isGenerating', isGenerating)
 
+// 遮罩层样式（控制背景透明度）
+const overlayStyle = computed(() => {
+  const overlayOpacity = (100 - backgroundOpacity.value) / 100
+  const bgColor = customBackground.value ? `rgba(180, 190, 200, ${overlayOpacity})` : 'transparent'
+  console.log(`遮罩层计算: backgroundOpacity=${backgroundOpacity.value}, overlayOpacity=${overlayOpacity}, bgColor=${bgColor}`)
+  return { backgroundColor: bgColor }
+})
+
 // 背景样式
 const backgroundStyle = computed(() => {
   if (customBackground.value) {
-    return {
+    console.log('应用背景样式，背景数据长度:', customBackground.value.length)
+
+    // base64 data URL需要包裹在url()中，但要正确处理引号
+    const style = {
       backgroundImage: `url(${customBackground.value})`,
       backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      backgroundRepeat: 'no-repeat'
+      backgroundPosition: 'center center',
+      backgroundRepeat: 'no-repeat',
+      backgroundAttachment: 'fixed',
+      minHeight: '100vh'
     }
+    console.log('背景图URL（前50字符）:', style.backgroundImage.substring(0, 50))
+    return style
   }
+  console.log('没有自定义背景，使用默认')
   return {}
 })
 
@@ -133,9 +153,14 @@ const handlePoetrySelect = (poetryText: string) => {
 }
 
 // 应用设置
-const applySettings = (settings: { backgroundImage: string; widgetSize: string }) => {
+const applySettings = (settings: { backgroundImage: string; widgetSize: string; backgroundOpacity: number }) => {
+  console.log('应用设置:', settings)
+  console.log('新透明度值:', settings.backgroundOpacity)
   customBackground.value = settings.backgroundImage
   widgetSize.value = settings.widgetSize
+  backgroundOpacity.value = settings.backgroundOpacity
+  console.log('customBackground更新为:', customBackground.value ? '(已设置)' : '(空)')
+  console.log('backgroundOpacity更新为:', backgroundOpacity.value)
 }
 
 // 从 localStorage 加载设置
@@ -143,12 +168,26 @@ const loadSettings = () => {
   try {
     const savedBg = localStorage.getItem('custom-background')
     const savedSize = localStorage.getItem('widget-size')
+    const savedOpacity = localStorage.getItem('background-opacity')
+
+    console.log('从localStorage加载设置:', {
+      hasBg: !!savedBg,
+      bgLength: savedBg?.length || 0,
+      size: savedSize,
+      opacity: savedOpacity
+    })
 
     if (savedBg) {
       customBackground.value = savedBg
+      console.log('背景图已加载')
+    } else {
+      console.log('没有保存的背景图')
     }
     if (savedSize) {
       widgetSize.value = savedSize
+    }
+    if (savedOpacity) {
+      backgroundOpacity.value = parseInt(savedOpacity)
     }
   } catch (error) {
     console.error('加载设置失败:', error)
@@ -157,5 +196,15 @@ const loadSettings = () => {
 
 onMounted(() => {
   loadSettings()
+
+  // 强制移除bg-gradient-paper类（如果有自定义背景）
+  if (customBackground.value) {
+    const el = document.querySelector('.custom-bg-container')
+    if (el) {
+      el.classList.remove('bg-gradient-paper')
+      console.log('已移除bg-gradient-paper类')
+    }
+  }
 })
 </script>
+

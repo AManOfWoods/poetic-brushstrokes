@@ -123,6 +123,36 @@
               </div>
             </div>
           </div>
+
+          <!-- 背景透明度设置 -->
+          <div class="space-y-4">
+            <div class="flex items-center gap-2">
+              <SlidersIcon class="w-5 h-5 text-bamboo-green" />
+              <h3 class="font-semibold text-ink-wash text-lg">背景透明度</h3>
+            </div>
+
+            <div class="space-y-3">
+              <div class="flex items-center justify-between">
+                <p class="text-sm text-muted-foreground">调整背景图的透明度</p>
+                <span class="text-sm font-medium text-bamboo-green">{{ backgroundOpacity }}%</span>
+              </div>
+
+              <input
+                type="range"
+                v-model.number="backgroundOpacity"
+                @input="updateOpacityRealtime"
+                min="0"
+                max="100"
+                step="5"
+                class="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-bamboo-green"
+              />
+
+              <div class="flex justify-between text-xs text-muted-foreground">
+                <span>完全透明</span>
+                <span>不透明</span>
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- 底部按钮 -->
@@ -155,12 +185,13 @@ const props = defineProps<{
 
 const emit = defineEmits<{
   'update:isOpen': [value: boolean]
-  'settings-changed': [settings: { backgroundImage: string; widgetSize: string }]
+  'settings-changed': [settings: { backgroundImage: string; widgetSize: string; backgroundOpacity: number }]
 }>()
 
 const bgFileInput = ref<HTMLInputElement | null>(null)
 const customBackground = ref<string>('')
 const widgetSize = ref<string>('large')
+const backgroundOpacity = ref<number>(70)
 
 const defaultBackground = new URL('@/assets/bg.jpg', import.meta.url).href
 
@@ -194,12 +225,16 @@ const loadSettings = () => {
   try {
     const savedBg = localStorage.getItem('custom-background')
     const savedSize = localStorage.getItem('widget-size')
+    const savedOpacity = localStorage.getItem('background-opacity')
 
     if (savedBg) {
       customBackground.value = savedBg
     }
     if (savedSize) {
       widgetSize.value = savedSize
+    }
+    if (savedOpacity) {
+      backgroundOpacity.value = parseInt(savedOpacity)
     }
   } catch (error) {
     console.error('加载设置失败:', error)
@@ -212,18 +247,39 @@ const handleBackgroundUpload = (event: Event) => {
   const file = target.files?.[0]
 
   if (file) {
-    // 验证文件大小（限制5MB）
-    if (file.size > 5 * 1024 * 1024) {
-      alert('图片文件过大，请选择小于5MB的图片')
+    // 验证文件类型
+    if (!file.type.startsWith('image/')) {
+      alert('请选择图片文件')
+      return
+    }
+
+    // 验证文件大小（限制3MB，确保base64后不超过localStorage限制）
+    if (file.size > 3 * 1024 * 1024) {
+      alert('图片文件过大，请选择小于3MB的图片\n\n提示：推荐使用压缩后的图片以获得更好的性能')
       return
     }
 
     const reader = new FileReader()
     reader.onload = (e) => {
       customBackground.value = e.target?.result as string
+      console.log('背景图已选择，大小:', Math.round((customBackground.value.length / 1024 / 1024) * 100) / 100, 'MB (base64)')
+      alert('背景图已选择！请点击"保存设置"按钮应用')
+    }
+    reader.onerror = () => {
+      alert('图片读取失败，请重试')
     }
     reader.readAsDataURL(file)
   }
+}
+
+// 实时更新透明度
+const updateOpacityRealtime = () => {
+  console.log('实时更新透明度:', backgroundOpacity.value)
+  emit('settings-changed', {
+    backgroundImage: backgroundPreview.value,
+    widgetSize: widgetSize.value,
+    backgroundOpacity: backgroundOpacity.value
+  })
 }
 
 // 恢复默认背景
@@ -232,7 +288,8 @@ const resetBackground = () => {
   localStorage.removeItem('custom-background')
   emit('settings-changed', {
     backgroundImage: defaultBackground,
-    widgetSize: widgetSize.value
+    widgetSize: widgetSize.value,
+    backgroundOpacity: backgroundOpacity.value
   })
 }
 
@@ -240,17 +297,28 @@ const resetBackground = () => {
 const saveSettings = () => {
   try {
     if (customBackground.value) {
-      localStorage.setItem('custom-background', customBackground.value)
+      try {
+        localStorage.setItem('custom-background', customBackground.value)
+        console.log('背景图已保存到localStorage')
+      } catch (e: any) {
+        if (e.name === 'QuotaExceededError') {
+          alert('存储空间不足！\n\n图片太大，请选择更小的图片（建议小于2MB）')
+          return
+        }
+        throw e
+      }
     }
     localStorage.setItem('widget-size', widgetSize.value)
+    localStorage.setItem('background-opacity', backgroundOpacity.value.toString())
 
     emit('settings-changed', {
       backgroundImage: backgroundPreview.value,
-      widgetSize: widgetSize.value
+      widgetSize: widgetSize.value,
+      backgroundOpacity: backgroundOpacity.value
     })
 
     close()
-    alert('设置保存成功！')
+    alert('设置保存成功！背景已更新')
   } catch (error) {
     console.error('保存设置失败:', error)
     alert('保存设置失败，请重试')

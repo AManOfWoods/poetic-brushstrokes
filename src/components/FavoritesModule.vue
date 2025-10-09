@@ -1,12 +1,5 @@
 <template>
-  <div class="w-full h-full overflow-hidden bg-gradient-paper relative">
-    <!-- Background Image with Overlay -->
-    <div
-      class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 pointer-events-none"
-      :style="{ backgroundImage: `url(${backgroundImage})` }"
-    />
-    <div class="absolute inset-0 bg-gradient-mist opacity-40 pointer-events-none" />
-
+  <div class="w-full h-full overflow-hidden bg-transparent relative">
     <div class="h-full max-w-6xl mx-auto px-8 p-2 pt-20 pb-8 flex flex-col relative z-10">
       <!-- Header -->
       <div class="text-center mb-4 flex-shrink-0">
@@ -20,7 +13,7 @@
           <div class="text-center">
             <HeartIcon class="w-16 h-16 text-mountain-mist mx-auto mb-4" />
             <p class="text-lg text-mountain-mist mb-2">还没有收藏</p>
-            <p class="text-sm text-muted-foreground">在诗生画或画生诗界面收藏您喜欢的作品</p>
+            <p class="text-sm text-muted-foreground">在寻诗入画或览画成诗界面收藏您喜欢的作品</p>
           </div>
         </div>
 
@@ -34,7 +27,7 @@
             <div class="p-4">
               <div class="flex items-start justify-between mb-3">
                 <span class="text-xs px-2 py-1 rounded-full" :class="item.type === 'text-to-image' ? 'bg-accent/10 text-accent' : 'bg-bamboo-green/10 text-bamboo-green'">
-                  {{ item.type === 'text-to-image' ? '诗生画' : '画生诗' }}
+                  {{ item.type === 'text-to-image' ? '寻诗入画' : '览画成诗' }}
                 </span>
                 <button
                   @click="handleDelete(item.id)"
