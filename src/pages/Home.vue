@@ -1,5 +1,5 @@
 <template>
-  <div class="w-screen h-screen overflow-hidden relative custom-bg-container" :class="{ 'bg-gradient-paper': !customBackground.value }" :style="backgroundStyle">
+  <div class="w-screen h-screen overflow-hidden relative custom-bg-container" :class="{ 'bg-gradient-paper': !customBackground }" :style="backgroundStyle">
     <!-- 半透明白色遮罩层，弱化背景 -->
     <div class="absolute inset-0 pointer-events-none" :style="overlayStyle"></div>
 
