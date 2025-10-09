@@ -114,7 +114,8 @@ provide('isGenerating', isGenerating)
 // 遮罩层样式（控制背景透明度）
 const overlayStyle = computed(() => {
   const overlayOpacity = (100 - backgroundOpacity.value) / 100
-  const bgColor = customBackground.value ? `rgba(180, 190, 200, ${overlayOpacity})` : 'transparent'
+  // 如果有自定义背景或默认背景，都应用遮罩
+  const bgColor = `rgba(255, 255, 255, ${overlayOpacity * 0.3})`
   console.log(`遮罩层计算: backgroundOpacity=${backgroundOpacity.value}, overlayOpacity=${overlayOpacity}, bgColor=${bgColor}`)
   return { backgroundColor: bgColor }
 })
@@ -136,8 +137,16 @@ const backgroundStyle = computed(() => {
     console.log('背景图URL（前50字符）:', style.backgroundImage.substring(0, 50))
     return style
   }
-  console.log('没有自定义背景，使用默认')
-  return {}
+  // 使用默认背景图
+  console.log('使用默认背景图')
+  return {
+    backgroundImage: 'url(/screenshot-20251003-184334.png)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center',
+    backgroundRepeat: 'no-repeat',
+    backgroundAttachment: 'fixed',
+    minHeight: '100vh'
+  }
 })
 
 const setActiveTab = (tab: string) => {
