@@ -1,12 +1,5 @@
 <template>
-  <div class="w-full h-full overflow-hidden bg-gradient-paper flex flex-col relative">
-    <!-- Background Image with Overlay -->
-    <div 
-      class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 pointer-events-none"
-      :style="{ backgroundImage: `url(${backgroundImage})` }"
-    />
-    <div class="absolute inset-0 bg-gradient-mist opacity-40 pointer-events-none" />
-    
+  <div class="w-full h-full overflow-hidden flex flex-col relative bg-transparent">
     <!-- Content -->
     <div class="relative z-10 px-4 py-2 pt-20 h-full flex flex-col justify-center max-w-4xl mx-auto">
       <!-- Header flex-shrink-0 -->
@@ -50,8 +43,11 @@
           class="relative overflow-hidden p-8 glass-card hover:shadow-2xl transition-all duration-500 group cursor-pointer flex flex-col justify-center rounded-2xl"
           @click="$emit('navigate', 'text-to-image')"
         >
-          <!-- 装饰性渐变背景 -->
-          <div class="absolute inset-0 bg-gradient-to-br from-orange-50/50 via-rose-50/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <!-- 装饰性图片背景 -->
+          <div
+            class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            style="background-image: url('/text-to-image-bg.png'); background-size: cover; background-position: center; background-repeat: no-repeat;"
+          ></div>
 
           <div class="relative z-10 text-center">
             <!-- 图标容器 -->
@@ -64,7 +60,7 @@
 
             <!-- 标题 -->
             <h3 class="text-2xl font-bold text-ink-wash mb-3 group-hover:text-accent transition-colors">
-              诗生画
+              寻诗入画
             </h3>
 
             <!-- 描述 -->
@@ -82,8 +78,11 @@
           class="relative overflow-hidden p-8 glass-card hover:shadow-2xl transition-all duration-500 group cursor-pointer flex flex-col justify-center rounded-2xl"
           @click="$emit('navigate', 'image-to-text')"
         >
-          <!-- 装饰性渐变背景 -->
-          <div class="absolute inset-0 bg-gradient-to-br from-emerald-50/50 via-teal-50/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+          <!-- 装饰性图片背景 -->
+          <div
+            class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500"
+            style="background-image: url('/image-to-text-bg.png'); background-size: cover; background-position: center; background-repeat: no-repeat;"
+          ></div>
 
           <div class="relative z-10 text-center">
             <!-- 图标容器 -->
@@ -96,7 +95,7 @@
 
             <!-- 标题 -->
             <h3 class="text-2xl font-bold text-ink-wash mb-3 group-hover:text-bamboo-green transition-colors">
-              画生诗
+              览画成诗
             </h3>
 
             <!-- 描述 -->

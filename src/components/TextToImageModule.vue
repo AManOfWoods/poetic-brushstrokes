@@ -1,23 +1,16 @@
 <template>
-  <div class="w-full h-full overflow-hidden bg-gradient-paper relative">
-    <!-- Background Image with Overlay -->
-    <div 
-      class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 pointer-events-none"
-      :style="{ backgroundImage: `url(${backgroundImage})` }"
-    />
-    <div class="absolute inset-0 bg-gradient-mist opacity-40 pointer-events-none" />
-    
-    <div class="h-full max-w-6xl mx-auto px-8 p-2 pt-20 pb-8 flex flex-col relative z-10">
+  <div class="w-full h-full relative" style="background-image: url('/text-to-image-bg.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <div class="h-full max-w-6xl mx-auto px-8 p-2 pt-20 pb-8 flex flex-col relative" style="overflow: hidden;">
       <!-- Header flex-shrink-0 -->
       <div class="text-center mb-4 flex-shrink-0">
-        <h2 class="text-2xl md:text-3xl font-bold text-ink-wash mb-2">诗生画</h2>
+        <h2 class="text-2xl md:text-3xl font-bold text-ink-wash mb-2">寻诗入画</h2>
         <p class="text-base text-muted-foreground">输入诗词文字，AI 为您生成优美的画作</p>
       </div>
 
       <!-- Content flex-1 -->
       <div class="grid lg:grid-cols-2 gap-4 flex-1 min-h-0">
         <!-- Input Section -->
-        <div class="p-4 shadow-paper bg-silk-white/80 rounded-lg" style="height: 70vh; display: flex; flex-direction: column;">
+        <div class="p-4 shadow-paper bg-silk-white/95 rounded-lg" style="height: 70vh; display: flex; flex-direction: column;">
           <div class="flex items-center justify-between mb-2" style="height: 5%;">
             <h3 class="font-semibold text-ink-wash text-base">输入诗词或文字描述</h3>
           </div>
@@ -101,7 +94,7 @@
         </div>
 
         <!-- Output Section -->
-        <div class="p-4 shadow-paper bg-silk-white/80 rounded-lg" style="height: 70vh; display: flex; flex-direction: column;">
+        <div class="p-4 shadow-paper bg-silk-white/95 rounded-lg" style="height: 70vh; display: flex; flex-direction: column;">
           <div class="flex items-center justify-between mb-2" style="height: 5%;">
             <div class="flex items-center gap-3">
               <h3 class="font-semibold text-ink-wash text-base">生成的画作</h3>
@@ -166,17 +159,15 @@
 </template>
 
 <script setup lang="ts">
-import { ref, inject, watch } from 'vue'
+import { ref, inject, watch, computed } from 'vue'
 import { Sparkles as SparklesIcon, Download as DownloadIcon, RefreshCw as RefreshCwIcon, Heart as HeartIcon } from 'lucide-vue-next'
 import { textToImageService } from '@/services/textToImage'
 import { favoriteService } from '@/services/favorite'
+import textToImageBg from '/text-to-image-bg.png?url'
 
 const props = defineProps<{
   selectedPoetry?: string
 }>()
-
-// 使用本地背景图片
-const backgroundImage = new URL('@/assets/bg.jpg', import.meta.url).href
 
 const inputText = ref('')
 const selectedStyle = ref('ink-wash')
@@ -284,3 +275,4 @@ const regenerate = () => {
   }
 }
 </script>
+

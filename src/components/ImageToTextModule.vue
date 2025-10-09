@@ -1,23 +1,16 @@
 <template>
-  <div class="w-full h-screen overflow-y-auto bg-gradient-paper relative">
-    <!-- Background Image with Overlay -->
-    <div
-      class="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-20 pointer-events-none"
-      :style="{ backgroundImage: `url(${backgroundImage})` }"
-    />
-    <div class="absolute inset-0 bg-gradient-mist opacity-40 pointer-events-none" />
-
-    <div class="max-w-7xl mx-auto px-6 py-20 relative z-10">
+  <div class="w-full h-screen relative" style="background-image: url('/image-to-text-bg.png'); background-size: cover; background-position: center; background-repeat: no-repeat;">
+    <div class="max-w-7xl mx-auto px-6 py-20 relative overflow-y-auto" style="height: 100%;">
       <!-- Header -->
       <div class="text-center mb-8">
-        <h2 class="text-3xl md:text-4xl font-bold text-ink-wash mb-2">画生诗</h2>
-        <p class="text-base text-muted-foreground">上传您的画作，AI 为您生成诗意的表达</p>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-300 mb-2">览画成诗</h2>
+        <p class="text-base text-gray-400">上传您的画作，AI 为您生成诗意的表达</p>
       </div>
 
       <!-- 主内容区域 -->
       <div class="grid lg:grid-cols-2 gap-6 mb-6">
         <!-- 左侧：图片区域（轮播或上传） -->
-        <div class="p-6 shadow-paper bg-silk-white/90 rounded-xl backdrop-blur-sm">
+        <div class="p-6 shadow-paper bg-silk-white/95 rounded-xl">
           <!-- 标题栏 -->
           <div class="flex items-center justify-between mb-4">
             <h3 class="font-semibold text-ink-wash text-lg">
@@ -146,7 +139,7 @@
         </div>
 
         <!-- 右侧：诗词显示 -->
-        <div class="p-6 shadow-paper bg-silk-white/90 rounded-xl backdrop-blur-sm min-h-[600px] flex flex-col">
+        <div class="p-6 shadow-paper bg-silk-white/95 rounded-xl min-h-[600px] flex flex-col">
           <div class="flex items-center justify-between mb-4">
             <div class="flex items-center gap-3">
               <h3 class="font-semibold text-ink-wash text-lg">
@@ -233,9 +226,7 @@ import { FileImage as FileImageIcon, Sparkles as SparklesIcon, Copy as CopyIcon,
 import { imageToTextService } from '@/services/imageToText'
 import { favoriteService } from '@/services/favorite'
 import { marked } from 'marked'
-
-// 使用本地背景图片
-const backgroundImage = new URL('@/assets/bg.jpg', import.meta.url).href
+import imageToTextBg from '/image-to-text-bg.png?url'
 
 const uploadedImage = ref<string | null>(null)
 const uploadedFile = ref<File | null>(null)
@@ -556,4 +547,5 @@ const handleGenerate = async () => {
 .markdown-content :deep(hr) {
   @apply my-4 border-amber-300/30;
 }
+
 </style>
