@@ -1,13 +1,13 @@
 services:
   - type: web
     name: poetic-brushstrokes
-    env: static
+    env: node
     buildCommand: npm install && npm run build
-    staticPublishPath: ./dist
+    startCommand: node server.cjs
     envVars:
       - key: NODE_VERSION
         value: 18
-      - key: VITE_DOUBAO_API_KEY
+      - key: VOLCANO_API_KEY
         sync: false
-      - key: VITE_DOUBAO_BASE_URL
-        value: https://ark.cn-beijing.volces.com/api/v3
+      - key: PORT
+        value: 10000

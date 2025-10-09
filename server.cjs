@@ -2,16 +2,20 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const axios = require('axios');
+const path = require('path');
 const app = express();
-const port = 3000;
+const port = process.env.PORT || 3000;
 
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
+// 服务静态文件（生产环境）
+app.use(express.static(path.join(__dirname, 'dist')));
+
 const VOLCANO_API_KEY = process.env.VOLCANO_API_KEY;
 const VOLCANO_BASE_URL = 'https://ark.cn-beijing.volces.com';
-const TEXT_TO_IMAGE_MODEL = process.env.VITE_TEXT_TO_IMAGE_MODEL;
-const IMAGE_TO_TEXT_MODEL = process.env.VITE_IMAGE_TO_TEXT_MODEL;
+const TEXT_TO_IMAGE_MODEL = process.env.VITE_TEXT_TO_IMAGE_MODEL || 'doubao-seedream-4.0-250828';
+const IMAGE_TO_TEXT_MODEL = process.env.VITE_IMAGE_TO_TEXT_MODEL || 'doubao-seed-1.6-vision';
 
 app.post('/api/text-to-image', async (req, res) => {
   try {
@@ -71,11 +75,17 @@ app.post('/api/image-to-text', async (req, res) => {
   }
 });
 
-app.listen(port, () => {
-  console.log(`Backend proxy server listening at http://localhost:${port}`);
-  console.log('Environment loaded:', {
-    textToImageModel: TEXT_TO_IMAGE_MODEL,
-    imageToTextModel: IMAGE_TO_TEXT_MODEL,
+// 所有其他请求返回 index.html（用于 SPA 路由）
+app.get('*', (req, res) => {
+  res.sendFile(path.join(__dirname, 'dist', 'index.html'));
+});
+
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Server listening at http://0.0.0.0:${port}`);
+  console.log('Environment:', {
+    nodeEnv: process.env.NODE_ENV || 'development',
+    textToImageModel: TEXT_TO_IMAGE_MODEL || 'doubao-seedream-4.0-250828',
+    imageToTextModel: IMAGE_TO_TEXT_MODEL || 'doubao-seed-1.6-vision',
     hasApiKey: !!VOLCANO_API_KEY
   });
 });
