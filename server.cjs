@@ -23,6 +23,43 @@ const VOLCANO_BASE_URL = 'https://ark.cn-beijing.volces.com';
 const TEXT_TO_IMAGE_MODEL = process.env.VITE_TEXT_TO_IMAGE_MODEL || 'doubao-seedream-4.0-250828';
 const IMAGE_TO_TEXT_MODEL = process.env.VITE_IMAGE_TO_TEXT_MODEL || 'doubao-seed-1.6-vision';
 
+app.get('/api/image-proxy', async (req, res) => {
+  const { url } = req.query;
+
+  if (typeof url !== 'string' || !url.trim()) {
+    return res.status(400).json({ error: 'Missing image url' });
+  }
+
+  let parsedUrl;
+
+  try {
+    parsedUrl = new URL(url);
+  } catch (error) {
+    return res.status(400).json({ error: 'Invalid image url' });
+  }
+
+  if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+    return res.status(400).json({ error: 'Unsupported image protocol' });
+  }
+
+  try {
+    const response = await axios.get(parsedUrl.toString(), {
+      responseType: 'arraybuffer',
+      timeout: 15000,
+    });
+
+    res.set('Content-Type', response.headers['content-type'] || 'image/png');
+    res.set('Cache-Control', 'public, max-age=86400');
+    res.send(Buffer.from(response.data));
+  } catch (error) {
+    console.error('Image proxy error:', error.response?.data || error.message);
+    res.status(error.response?.status || 500).json({
+      error: 'Failed to fetch image for export',
+      details: error.response?.data
+    });
+  }
+});
+
 app.post('/api/text-to-image', async (req, res) => {
   try {
     console.log('Received text-to-image request:', {

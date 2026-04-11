@@ -21,17 +21,26 @@
           <div
             v-for="item in favorites"
             :key="item.id"
-            class="bg-silk-white/80 rounded-lg shadow-paper overflow-hidden hover:shadow-floating transition-brush"
+            class="group bg-silk-white/85 rounded-[22px] border border-white/70 shadow-paper overflow-hidden transition-all duration-300 hover:-translate-y-1 hover:shadow-floating"
           >
             <!-- Content Area -->
-            <div class="p-4">
-              <div class="flex items-start justify-between mb-3">
-                <span class="text-xs px-2 py-1 rounded-full" :class="item.type === 'text-to-image' ? 'bg-accent/10 text-accent' : 'bg-bamboo-green/10 text-bamboo-green'">
-                  {{ item.type === 'text-to-image' ? '寻诗入画' : '览画成诗' }}
-                </span>
+            <div class="p-5">
+              <div class="flex items-start justify-between mb-4">
+                <div class="flex flex-wrap gap-2">
+                  <span class="text-xs px-2.5 py-1 rounded-full font-medium" :class="item.type === 'text-to-image' ? 'bg-accent/10 text-accent' : 'bg-bamboo-green/10 text-bamboo-green'">
+                    {{ item.type === 'text-to-image' ? '寻诗入画' : '览画成诗' }}
+                  </span>
+                  <span
+                    v-if="getStyleLabel(item)"
+                    class="text-xs px-2.5 py-1 rounded-full font-medium bg-white/85 text-ink-wash border border-mountain-mist/20"
+                  >
+                    {{ getStyleLabel(item) }}
+                  </span>
+                </div>
                 <button
                   @click="handleDelete(item.id)"
-                  class="text-mountain-mist hover:text-red-500 transition-colors"
+                  class="w-8 h-8 rounded-full text-mountain-mist hover:text-red-500 hover:bg-red-50 transition-colors flex items-center justify-center"
+                  title="删除收藏"
                 >
                   <TrashIcon class="w-4 h-4" />
                 </button>
@@ -46,7 +55,7 @@
                     class="w-full h-full object-cover"
                   />
                 </div>
-                <p class="text-sm text-ink-wash mt-2 line-clamp-2">{{ item.content }}</p>
+                <p class="text-sm text-ink-wash mt-3 line-clamp-2 leading-relaxed">{{ item.content }}</p>
               </div>
 
               <!-- 画生诗：显示图片和诗词 -->
@@ -80,6 +89,27 @@
               <div class="mt-2 text-xs text-muted-foreground">
                 {{ formatDate(item.createdAt) }}
               </div>
+
+              <div class="mt-2 text-[11px] leading-relaxed text-mountain-mist">
+                导出卡片仅包含图像与正文排版，不包含感悟内容。
+              </div>
+
+              <div class="mt-4">
+                <button
+                  @click="handleExport(item)"
+                  :disabled="exportingId === item.id"
+                  class="w-full rounded-2xl px-4 py-3 text-sm font-medium text-white shadow-lg transition-all disabled:opacity-60 disabled:pointer-events-none"
+                  :class="item.type === 'text-to-image'
+                    ? 'bg-gradient-to-r from-[#d67b60] via-[#d87d67] to-[#c96456] hover:shadow-[0_16px_30px_-12px_rgba(214,123,96,0.65)]'
+                    : 'bg-gradient-to-r from-[#6d946f] via-[#64876c] to-[#54785c] hover:shadow-[0_16px_30px_-12px_rgba(100,135,108,0.65)]'"
+                >
+                  <span class="inline-flex items-center justify-center gap-2">
+                    <Loader2Icon v-if="exportingId === item.id" class="w-4 h-4 animate-spin" />
+                    <DownloadIcon v-else class="w-4 h-4" />
+                    {{ exportingId === item.id ? '正在生成卡片...' : '导出精美卡片' }}
+                  </span>
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -90,14 +120,29 @@
 
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
-import { Heart as HeartIcon, Trash2 as TrashIcon } from 'lucide-vue-next'
+import { Heart as HeartIcon, Trash2 as TrashIcon, Download as DownloadIcon, Loader2 as Loader2Icon } from 'lucide-vue-next'
 import { favoriteService } from '@/services/favorite'
+import { exportFavoriteCard } from '@/lib/exportCard'
 import type { FavoriteItem } from '@/types/favorite'
 
 // 使用本地背景图片
 const backgroundImage = new URL('@/assets/bg.jpg', import.meta.url).href
 
 const favorites = ref<FavoriteItem[]>([])
+const exportingId = ref<string | null>(null)
+
+const styleLabels: Record<string, string> = {
+  'ink-wash': '水墨写意',
+  gongbi: '工笔细描',
+  landscape: '山水古风',
+  cartoon: 'Q版卡通',
+  anime: '奇幻动漫',
+  crayon: '蜡笔手绘',
+  poetry: '古风诗',
+  prose: '词牌',
+  story: '绝句',
+  fu: '赋体'
+}
 
 // 清理 Markdown 格式标记
 const cleanMarkdown = (text: string): string => {
@@ -121,11 +166,32 @@ const loadFavorites = () => {
   favorites.value = favoriteService.getAll()
 }
 
+const getStyleLabel = (item: FavoriteItem) => {
+  if (!item.style) {
+    return ''
+  }
+
+  return styleLabels[item.style] ?? item.style
+}
+
 // 删除收藏
 const handleDelete = (id: string) => {
   if (confirm('确定要删除这个收藏吗？')) {
     favoriteService.remove(id)
     loadFavorites()
+  }
+}
+
+const handleExport = async (item: FavoriteItem) => {
+  exportingId.value = item.id
+
+  try {
+    await exportFavoriteCard(item)
+  } catch (error) {
+    console.error('导出卡片失败:', error)
+    alert(error instanceof Error ? error.message : '导出卡片失败，请稍后重试')
+  } finally {
+    exportingId.value = null
   }
 }
 
