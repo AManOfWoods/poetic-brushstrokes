@@ -98,31 +98,31 @@
           <div class="flex items-center justify-between mb-2" style="height: 5%;">
             <div class="flex items-center gap-3">
               <h3 class="font-semibold text-ink-wash text-base">生成的画作</h3>
-              <div v-if="generatedImage" class="text-sm px-2 py-1 bg-accent/10 text-accent rounded-full border border-accent/20">
+              <div v-if="generatedImage" class="result-action-chip">
                 {{ allStyles.find(s => s.value === selectedStyle)?.label }}
               </div>
             </div>
             <div v-if="generatedImage" class="flex gap-1">
               <button
                 @click="handleFavorite"
-                class="border border-mountain-mist/30 text-mountain-mist hover:bg-mountain-mist/10 h-7 px-2 text-sm inline-flex items-center justify-center rounded-md"
+                class="result-action-button"
               >
-                <HeartIcon class="w-3 h-3 mr-0.5" />
+                <HeartIcon class="w-4 h-4 mr-1.5" />
                 收藏
               </button>
               <button
                 @click="saveImage"
-                class="border border-mountain-mist/30 text-mountain-mist hover:bg-mountain-mist/10 h-7 px-2 text-sm inline-flex items-center justify-center rounded-md"
+                class="result-action-button"
               >
-                <DownloadIcon class="w-3 h-3 mr-0.5" />
+                <DownloadIcon class="w-4 h-4 mr-1.5" />
                 保存
               </button>
               <button
                 @click="regenerate"
                 :disabled="isGenerating"
-                class="border border-mountain-mist/30 text-mountain-mist hover:bg-mountain-mist/10 h-7 px-2 text-sm inline-flex items-center justify-center rounded-md disabled:opacity-50 disabled:pointer-events-none"
+                class="result-action-button disabled:opacity-50 disabled:pointer-events-none"
               >
-                <RefreshCwIcon class="w-3 h-3 mr-0.5" />
+                <RefreshCwIcon class="w-4 h-4 mr-1.5" />
                 重新生成
               </button>
             </div>
@@ -275,4 +275,3 @@ const regenerate = () => {
   }
 }
 </script>
-

@@ -237,4 +237,27 @@
     width: 300px;
     height: 300px;
   }
+
+  .result-action-button {
+    @apply inline-flex items-center justify-center rounded-lg border bg-white/90 text-ink-wash font-semibold transition-colors;
+    border-color: hsl(210 8% 25% / 0.18);
+    min-height: 2.5rem;
+    padding: 0 1rem;
+    font-size: 0.98rem;
+    letter-spacing: 0.04em;
+  }
+
+  .result-action-button:hover {
+    background: rgba(248, 241, 232, 0.95);
+    color: hsl(20 8% 12%);
+  }
+
+  .result-action-chip {
+    @apply rounded-full border text-ink-wash font-semibold;
+    background: rgba(255, 248, 240, 0.92);
+    border-color: rgba(114, 91, 69, 0.18);
+    padding: 0.45rem 0.95rem;
+    font-size: 0.95rem;
+    line-height: 1;
+  }
 }

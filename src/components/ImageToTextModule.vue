@@ -42,7 +42,7 @@
               <img
                 :src="uploadedImage"
                 alt="Uploaded artwork"
-                class="w-full h-full object-cover"
+                class="w-full h-full object-contain bg-stone-100/80"
               />
             </div>
 
@@ -145,31 +145,31 @@
               <h3 class="font-semibold text-ink-wash text-lg">
                 {{ uploadedImage ? '生成的诗词' : '示例诗歌' }}
               </h3>
-              <div v-if="generatedPoetry || !uploadedImage" class="text-xs px-3 py-1 bg-bamboo-green/10 text-bamboo-green rounded-full border border-bamboo-green/20 font-medium">
+              <div v-if="generatedPoetry || !uploadedImage" class="result-action-chip">
                 {{ generatedPoetry ? poetryTypes.find(t => t.value === selectedPoetryType)?.label : exampleImages[currentExampleIndex].dynasty }}
               </div>
             </div>
             <div v-if="generatedPoetry" class="flex gap-2">
               <button
                 @click="handleFavorite"
-                class="border border-mountain-mist/30 text-mountain-mist hover:bg-mountain-mist/10 h-8 px-3 text-sm inline-flex items-center justify-center rounded-lg transition-colors"
+                class="result-action-button"
               >
-                <HeartIcon class="w-3.5 h-3.5 mr-1.5" />
+                <HeartIcon class="w-4 h-4 mr-1.5" />
                 收藏
               </button>
               <button
                 @click="copyToClipboard"
-                class="border border-mountain-mist/30 text-mountain-mist hover:bg-mountain-mist/10 h-8 px-3 text-sm inline-flex items-center justify-center rounded-lg transition-colors"
+                class="result-action-button"
               >
-                <CopyIcon class="w-3.5 h-3.5 mr-1.5" />
+                <CopyIcon class="w-4 h-4 mr-1.5" />
                 复制
               </button>
               <button
                 @click="regenerate"
                 :disabled="isGenerating"
-                class="border border-mountain-mist/30 text-mountain-mist hover:bg-mountain-mist/10 h-8 px-3 text-sm inline-flex items-center justify-center rounded-lg disabled:opacity-50 disabled:pointer-events-none transition-colors"
+                class="result-action-button disabled:opacity-50 disabled:pointer-events-none"
               >
-                <RefreshCwIcon class="w-3.5 h-3.5 mr-1.5" />
+                <RefreshCwIcon class="w-4 h-4 mr-1.5" />
                 重新生成
               </button>
             </div>
@@ -194,12 +194,12 @@
                   <h4 class="text-2xl font-bold text-ink-wash poetry-title-text mb-2">
                     {{ exampleImages[currentExampleIndex].title }}
                   </h4>
-                  <p class="text-sm text-mountain-mist">{{ exampleImages[currentExampleIndex].dynasty }}</p>
+                  <p class="text-base font-medium text-ink-wash/90">{{ exampleImages[currentExampleIndex].dynasty }}</p>
                 </div>
                 <div class="poetry-text-content text-base text-ink-wash leading-loose whitespace-pre-line text-center mb-6 font-serif">
                   {{ exampleImages[currentExampleIndex].content }}
                 </div>
-                <div class="text-sm text-mountain-mist/80 leading-relaxed border-t border-amber-200/50 pt-4">
+                <div class="text-base text-ink-wash/90 leading-relaxed border-t border-amber-200/50 pt-4">
                   <p class="font-medium text-ink-wash mb-2">创作说明：</p>
                   {{ exampleImages[currentExampleIndex].description }}
                 </div>
@@ -510,7 +510,7 @@ const handleGenerate = async () => {
 .markdown-content :deep(h3) {
   font-family: 'STKaiti', 'KaiTi', 'Microsoft YaHei', serif;
   @apply text-ink-wash font-bold mb-3 text-center;
-  font-size: 1.3rem;
+  font-size: 1.45rem;
   letter-spacing: 0.25em;
 }
 
@@ -519,7 +519,7 @@ const handleGenerate = async () => {
   @apply mb-4 text-ink-wash text-center;
   line-height: 2.5;
   letter-spacing: 0.2em;
-  font-size: 1.15rem;
+  font-size: 1.2rem;
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
 }
 
@@ -528,9 +528,16 @@ const handleGenerate = async () => {
 }
 
 .markdown-content :deep(em) {
-  @apply text-mountain-mist/70 text-xs;
-  font-style: italic;
-  letter-spacing: normal;
+  display: block;
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(212, 184, 150, 0.45);
+  color: hsl(20 8% 18%);
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  line-height: 2;
 }
 
 /* 隐藏列表样式的注释 */

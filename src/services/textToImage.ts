@@ -47,14 +47,36 @@ export class TextToImageService {
     return stylePrompts[style] || '';
   }
 
+  private normalizeText(text: string): string {
+    return text
+      .replace(/\r?\n+/g, '；')
+      .replace(/\s+/g, ' ')
+      .trim();
+  }
+
+  private buildPrompt(text: string, style: string): string {
+    const stylePrefix = this.getStylePrompt(style);
+    const normalizedText = this.normalizeText(text);
+
+    return [
+      `${stylePrefix}请先准确理解这段诗词或文字的核心意象，再把它转化为一幅高度相关的完整画面。`,
+      `原文仅用于理解意境，不要逐字照搬：${normalizedText}`,
+      '画面重点：紧扣原文中的季节、时间、地点、主体、动作和情绪，只保留最核心的1到3个视觉主体；优先呈现与诗意最相关的一幕；宁可简洁留白，也不要添加无关的人物、建筑、物件或装饰。',
+      '构图要求：主体清晰，层次分明，空间关系自然，色调统一，氛围准确，突出东方审美、诗意叙事与真实细节。',
+      '如果诗意较抽象，请提炼为最能代表诗意的自然或人物场景，确保图文高度一致，不要出现与原文冲突的内容。',
+      '严格禁止：画面中不要出现任何文字内容，不要出现诗句原文、标题、题字、书法、印章、落款、对联、标签、数字、字母、水印、logo、招牌文字、边框文字。',
+      'English constraints: no text, no Chinese characters, no calligraphy, no letters, no watermark, no logo, textless image only.',
+      '输出目标：高质量，精美细腻，艺术感强，4K质感，适合展示。'
+    ].join(' ');
+  }
+
   /**
    * 生成图片
    */
   async generateImage(text: string, style: string = 'ink-wash'): Promise<string> {
     try {
       // 构建完整的提示词
-      const stylePrefix = this.getStylePrompt(style);
-      const fullPrompt = `${stylePrefix}${text}，高质量，精美细腻，艺术感强，4K分辨率`;
+      const fullPrompt = this.buildPrompt(text, style);
 
       // 构建请求数据 - model 会由后端服务器自动添加
       const requestData: Partial<TextToImageRequest> = {
