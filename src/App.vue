@@ -1,11 +1,12 @@
 <template>
   <div id="app" class="w-screen h-screen overflow-hidden">
     <router-view />
+    <ToastCard />
   </div>
 </template>
 
 <script setup lang="ts">
-// Vue 3 Composition API setup
+import ToastCard from '@/components/ToastCard.vue'
 </script>
 
 <style>

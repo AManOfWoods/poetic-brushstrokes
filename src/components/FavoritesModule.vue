@@ -177,8 +177,13 @@ const getStyleLabel = (item: FavoriteItem) => {
 // 删除收藏
 const handleDelete = (id: string) => {
   if (confirm('确定要删除这个收藏吗？')) {
-    favoriteService.remove(id)
-    loadFavorites()
+    try {
+      favoriteService.remove(id)
+      loadFavorites()
+    } catch (error) {
+      console.error('删除收藏失败:', error)
+      alert(error instanceof Error ? error.message : '删除失败，请重试')
+    }
   }
 }
 
@@ -197,11 +202,15 @@ const handleExport = async (item: FavoriteItem) => {
 
 // 更新评价
 const handleCommentChange = (id: string, comment: string) => {
-  favoriteService.updateComment(id, comment)
-  // 本地更新，避免重新加载整个列表
-  const item = favorites.value.find(f => f.id === id)
-  if (item) {
-    item.comment = comment
+  try {
+    favoriteService.updateComment(id, comment)
+    // 本地更新，避免重新加载整个列表
+    const item = favorites.value.find(f => f.id === id)
+    if (item) {
+      item.comment = comment
+    }
+  } catch (error) {
+    console.error('保存评价失败:', error)
   }
 }
 

@@ -152,10 +152,11 @@
             <div v-if="generatedPoetry" class="flex gap-2">
               <button
                 @click="handleFavorite"
-                class="result-action-button"
+                :disabled="isSavingFavorite"
+                class="result-action-button disabled:opacity-50 disabled:pointer-events-none"
               >
                 <HeartIcon class="w-4 h-4 mr-1.5" />
-                收藏
+                {{ isSavingFavorite ? '收藏中...' : '收藏' }}
               </button>
               <button
                 @click="copyToClipboard"
@@ -225,6 +226,8 @@ import { ref, computed, inject, watch, onMounted, onUnmounted } from 'vue'
 import { FileImage as FileImageIcon, Sparkles as SparklesIcon, Copy as CopyIcon, RefreshCw as RefreshCwIcon, Heart as HeartIcon } from 'lucide-vue-next'
 import { imageToTextService } from '@/services/imageToText'
 import { favoriteService } from '@/services/favorite'
+import { prepareFavoriteImage } from '@/lib/favoriteImage'
+import { toastService } from '@/services/toast'
 import { marked } from 'marked'
 import imageToTextBg from '/image-to-text-bg.png?url'
 
@@ -237,6 +240,7 @@ const fileInput = ref<HTMLInputElement | null>(null)
 const errorMessage = ref<string | null>(null)
 const currentExampleIndex = ref(0)
 const autoPlay = ref(true)
+const isSavingFavorite = ref(false)
 
 // 示例图片数据
 const exampleImages = [
@@ -401,15 +405,26 @@ const loadExampleImage = async (example: typeof exampleImages[0]) => {
   }
 }
 
-const handleFavorite = () => {
-  if (generatedPoetry.value && uploadedImage.value) {
+const handleFavorite = async () => {
+  if (!generatedPoetry.value || !uploadedFile.value) return
+
+  isSavingFavorite.value = true
+
+  try {
+    const favoriteImage = await prepareFavoriteImage(uploadedFile.value)
+
     favoriteService.add({
       type: 'image-to-text',
-      content: uploadedImage.value,
+      content: favoriteImage,
       result: generatedPoetry.value,
       style: selectedPoetryType.value
     })
-    alert('收藏成功！')
+    toastService.success('这首新生成的诗作已加入“我的收藏”', '收藏成功')
+  } catch (error) {
+    console.error('收藏失败:', error)
+    toastService.error(error instanceof Error ? error.message : '收藏失败，请重试', '收藏失败')
+  } finally {
+    isSavingFavorite.value = false
   }
 }
 

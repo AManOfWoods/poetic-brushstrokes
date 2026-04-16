@@ -103,6 +103,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, computed } from 'vue'
 import { poetryDatabase, type Poetry } from '@/data/poetry'
+import { toastService } from '@/services/toast'
 
 const props = defineProps<{
   widgetSize?: string
@@ -267,7 +268,7 @@ const handleRefresh = () => {
 
 // 收藏
 const handleCollect = () => {
-  alert(`已收藏《${poetry.value.title}》`)
+  toastService.success(`《${poetry.value.title}》已加入收藏夹`, '收藏成功')
 }
 
 // 点击古诗内容，将其传递给父组件

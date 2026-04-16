@@ -163,6 +163,7 @@ import { ref, inject, watch, computed } from 'vue'
 import { Sparkles as SparklesIcon, Download as DownloadIcon, RefreshCw as RefreshCwIcon, Heart as HeartIcon } from 'lucide-vue-next'
 import { textToImageService } from '@/services/textToImage'
 import { favoriteService } from '@/services/favorite'
+import { toastService } from '@/services/toast'
 import textToImageBg from '/text-to-image-bg.png?url'
 
 const props = defineProps<{
@@ -251,13 +252,18 @@ const handleGenerate = async () => {
 // 收藏功能
 const handleFavorite = () => {
   if (generatedImage.value && inputText.value) {
-    favoriteService.add({
-      type: 'text-to-image',
-      content: inputText.value,
-      result: generatedImage.value,
-      style: selectedStyle.value
-    })
-    alert('收藏成功！')
+    try {
+      favoriteService.add({
+        type: 'text-to-image',
+        content: inputText.value,
+        result: generatedImage.value,
+        style: selectedStyle.value
+      })
+      toastService.success('当前作品已加入“我的收藏”', '收藏成功')
+    } catch (error) {
+      console.error('收藏失败:', error)
+      toastService.error(error instanceof Error ? error.message : '收藏失败，请重试', '收藏失败')
+    }
   }
 }
 
