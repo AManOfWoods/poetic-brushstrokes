@@ -308,7 +308,7 @@ const drawRoundedRect = (
   }
 }
 
-const drawCoverImage = (
+const drawContainedImage = (
   ctx: CanvasRenderingContext2D,
   image: HTMLImageElement,
   x: number,
@@ -321,13 +321,55 @@ const drawCoverImage = (
   roundRectPath(ctx, x, y, width, height, radius)
   ctx.clip()
 
-  const scale = Math.max(width / image.width, height / image.height)
+  const backgroundGradient = ctx.createLinearGradient(x, y, x, y + height)
+  backgroundGradient.addColorStop(0, 'rgba(250, 246, 238, 0.98)')
+  backgroundGradient.addColorStop(1, 'rgba(242, 235, 223, 0.98)')
+  ctx.fillStyle = backgroundGradient
+  ctx.fillRect(x, y, width, height)
+
+  ctx.save()
+  ctx.globalAlpha = 0.2
+  ctx.filter = 'blur(22px)'
+  const backgroundScale = Math.max(width / image.width, height / image.height)
+  const backgroundWidth = image.width * backgroundScale
+  const backgroundHeight = image.height * backgroundScale
+  const backgroundX = x + (width - backgroundWidth) / 2
+  const backgroundY = y + (height - backgroundHeight) / 2
+  ctx.drawImage(image, backgroundX, backgroundY, backgroundWidth, backgroundHeight)
+  ctx.restore()
+
+  ctx.fillStyle = 'rgba(255, 250, 244, 0.3)'
+  ctx.fillRect(x, y, width, height)
+
+  const inset = 18
+  const availableWidth = Math.max(width - inset * 2, 1)
+  const availableHeight = Math.max(height - inset * 2, 1)
+  const scale = Math.min(availableWidth / image.width, availableHeight / image.height)
   const drawWidth = image.width * scale
   const drawHeight = image.height * scale
   const drawX = x + (width - drawWidth) / 2
   const drawY = y + (height - drawHeight) / 2
+  const mattePadding = 10
+  const matteX = Math.max(x + 10, drawX - mattePadding)
+  const matteY = Math.max(y + 10, drawY - mattePadding)
+  const matteRight = Math.min(x + width - 10, drawX + drawWidth + mattePadding)
+  const matteBottom = Math.min(y + height - 10, drawY + drawHeight + mattePadding)
+  const matteWidth = Math.max(matteRight - matteX, drawWidth)
+  const matteHeight = Math.max(matteBottom - matteY, drawHeight)
 
+  ctx.save()
+  ctx.shadowColor = 'rgba(91, 77, 58, 0.14)'
+  ctx.shadowBlur = 20
+  ctx.shadowOffsetY = 12
+  drawRoundedRect(ctx, matteX, matteY, matteWidth, matteHeight, 20, 'rgba(255, 252, 247, 0.92)')
+  ctx.restore()
+
+  ctx.save()
+  roundRectPath(ctx, drawX, drawY, drawWidth, drawHeight, 16)
+  ctx.clip()
   ctx.drawImage(image, drawX, drawY, drawWidth, drawHeight)
+  ctx.restore()
+
   ctx.restore()
 }
 
@@ -619,7 +661,7 @@ const drawImagePanel = (
     `${accentColor}55`,
     2
   )
-  drawCoverImage(
+  drawContainedImage(
     ctx,
     image,
     frameX + 38,
